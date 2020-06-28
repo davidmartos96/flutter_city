@@ -39,13 +39,13 @@ class MetroMapPainter extends CustomPainter {
 
     canvas.drawPath(path, paint);
 
-    paintStops(canvas, size, metroLine);
-
     for (var track in metroLine.tracks) {
       if (track.trainsMap.isNotEmpty) {
         paintTrains(canvas, size, track);
       }
     }
+
+    paintStops(canvas, size, metroLine);
   }
 
   void paintStops(Canvas canvas, Size size, MetroLine metroLine) {
@@ -104,21 +104,21 @@ class MetroMapPainter extends CustomPainter {
 
       final double traveledDistance =
           localPercent * segmentDistances[segmentIndex];
-      final offset =
-          (start + normDif * traveledDistance).scale(size.width, size.height);
+      final offsetRel = (start + normDif * traveledDistance);
+      final offset = offsetRel.scale(size.width, size.height);
 
-      var rect = offset & Size(45, 25);
+      const fullTrainWidth = 35.0;
+      double trainWidth = fullTrainWidth;
+      if (segmentIndex == segmentDistances.length - 1) {
+        double distanceToEnd = (end - offsetRel)
+            .scale(size.width, size.height)
+            .translate(fullTrainWidth / 2, 0)
+            .distance;
+        trainWidth = min(trainWidth, distanceToEnd);
+      }
+
+      var rect = offset & Size(trainWidth, 20);
       rect = rect.shift(Offset(-rect.width / 2, -rect.height / 2));
-
-      const double radius = 5;
-      final rrect = RRect.fromLTRBAndCorners(
-        rect.left,
-        rect.top,
-        rect.right,
-        rect.bottom,
-        topRight: Radius.circular(radius),
-        bottomRight: Radius.circular(radius),
-      );
 
       Offset diff = (end - start).scale(size.width, size.height);
 
@@ -128,13 +128,7 @@ class MetroMapPainter extends CustomPainter {
       canvas.rotate(angle);
       canvas.translate(-rect.center.dx, -rect.center.dy);
 
-      Path trainPath = getCyberPath(
-        rrect,
-        topRight: BorderType.beveled,
-        bottomRight: BorderType.beveled,
-      );
-      canvas.drawPath(trainPath, paint);
-      //canvas.canvas.drawRect(rect, paint);
+      canvas.drawRect(rect, paint);
       canvas.restore();
     }
   }
