@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:hack20/metro_line.dart';
 import 'dart:math';
 
+import 'cyber_shape.dart';
+
 double stopRadius = 15;
 double lineStroke = 8;
 
@@ -106,14 +108,33 @@ class MetroMapPainter extends CustomPainter {
           (start + normDif * traveledDistance).scale(size.width, size.height);
 
       var rect = offset & Size(45, 25);
-
-      final angle = atan2(start.dy - end.dy, start.dx - end.dx);
       rect = rect.shift(Offset(-rect.width / 2, -rect.height / 2));
+
+      const double radius = 5;
+      final rrect = RRect.fromLTRBAndCorners(
+        rect.left,
+        rect.top,
+        rect.right,
+        rect.bottom,
+        topRight: Radius.circular(radius),
+        bottomRight: Radius.circular(radius),
+      );
+
+      Offset diff = (end - start).scale(size.width, size.height);
+
+      final angle = atan2(diff.dy, diff.dx);
       canvas.save();
       canvas.translate(rect.center.dx, rect.center.dy);
       canvas.rotate(angle);
       canvas.translate(-rect.center.dx, -rect.center.dy);
-      canvas.drawRect(rect, paint);
+
+      Path trainPath = getCyberPath(
+        rrect,
+        topRight: BorderType.beveled,
+        bottomRight: BorderType.beveled,
+      );
+      canvas.drawPath(trainPath, paint);
+      //canvas.canvas.drawRect(rect, paint);
       canvas.restore();
     }
   }
