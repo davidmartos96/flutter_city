@@ -34,7 +34,21 @@ MetroLine lineA = MetroLineBuilder(
 class MetroSegment {
   final List<Offset> points;
 
-  MetroSegment(this.points);
+  MetroSegment(this.points) : assert(points.length > 1);
+
+  double distance() {
+    return getDistances().reduce((a, b) => a + b);
+  }
+
+  List<double> getDistances() {
+    List<double> distances = [];
+    for (var i = 0; i < points.length - 1; i++) {
+      Offset o1 = points[i];
+      Offset o2 = points[i + 1];
+      distances.add((o1 - o2).distance);
+    }
+    return distances;
+  }
 }
 
 class MetroLineBuilder {
