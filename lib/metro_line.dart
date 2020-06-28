@@ -2,18 +2,18 @@ import 'package:flutter/material.dart';
 
 class MetroLine {
   final Color color;
-  final List<MetroSegment> segments;
+  final List<MetroTrack> tracks;
   final Set<Offset> stops;
 
-  MetroLine(this.color, this.segments, this.stops)
+  MetroLine(this.color, this.tracks, this.stops)
       : assert(
             stops.containsAll(
-                [segments.first.points.first, segments.first.points.last]),
+                [tracks.first.points.first, tracks.first.points.last]),
             "Begin and end must be stops");
 
   List<Offset> getPoints() {
-    List<Offset> points = [segments.first.points.first];
-    for (var segment in segments) {
+    List<Offset> points = [tracks.first.points.first];
+    for (var segment in tracks) {
       points.addAll(segment.points.skip(1));
     }
     return points;
@@ -23,18 +23,18 @@ class MetroLine {
 MetroLine lineA = MetroLineBuilder(
   Colors.pink,
   Offset(0.1, 0.1),
-).addSegment(
+).addTrack(
   [Offset(0.4, 0.1)],
-).addSegment(
+).addTrack(
   [Offset(0.6, 0.5), Offset(0.75, 0.5)],
-).addSegment(
+).addTrack(
   [Offset(0.9, 0.5)],
 ).build();
 
-class MetroSegment {
+class MetroTrack {
   final List<Offset> points;
 
-  MetroSegment(this.points) : assert(points.length > 1);
+  MetroTrack(this.points) : assert(points.length > 1);
 
   double distance() {
     return getDistances().reduce((a, b) => a + b);
@@ -54,27 +54,27 @@ class MetroSegment {
 class MetroLineBuilder {
   final Color color;
   Set<Offset> _stops = {};
-  List<MetroSegment> _segments = [];
-  MetroSegment _currentSegment;
+  List<MetroTrack> _tracks = [];
+  MetroTrack _currentTrack;
 
   MetroLineBuilder(this.color, Offset start) {
     _stops.add(start);
-    _currentSegment = MetroSegment([start]);
+    _currentTrack = MetroTrack([start]);
   }
 
-  MetroLineBuilder addSegment(List<Offset> offsets) {
-    _currentSegment.points.addAll(offsets);
-    _segments.add(_currentSegment);
+  MetroLineBuilder addTrack(List<Offset> offsets) {
+    _currentTrack.points.addAll(offsets);
+    _tracks.add(_currentTrack);
 
     Offset last = offsets.last;
     _stops.add(last);
 
-    _currentSegment = MetroSegment([last]);
+    _currentTrack = MetroTrack([last]);
 
     return this;
   }
 
   MetroLine build() {
-    return MetroLine(color, _segments, _stops);
+    return MetroLine(color, _tracks, _stops);
   }
 }
