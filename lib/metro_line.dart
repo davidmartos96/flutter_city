@@ -33,8 +33,9 @@ MetroLine lineA = MetroLineBuilder(
 
 class MetroTrack {
   final List<Offset> points;
+  Map<int, double> trainsMap = {};
 
-  MetroTrack(this.points) : assert(points.length > 1);
+  MetroTrack(this.points);
 
   double distance() {
     return getDistances().reduce((a, b) => a + b);
