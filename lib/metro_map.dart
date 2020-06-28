@@ -28,10 +28,11 @@ class MetroMapPainter extends CustomPainter {
       ..style = PaintingStyle.stroke;
 
     Path path = Path();
+    final points = metroLine.getPoints();
 
-    path.moveTo(metroLine.points.first.dx * size.width,
-        metroLine.points.first.dy * size.height);
-    for (var point in metroLine.points.skip(1)) {
+    path.moveTo(points.first.dx * size.width,
+        points.first.dy * size.height);
+    for (var point in points.skip(1)) {
       path.lineTo(point.dx * size.width, point.dy * size.height);
     }
 
