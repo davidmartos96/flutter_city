@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hack20/metro_line.dart';
+import 'dart:math';
 
 double stopRadius = 15;
 double lineStroke = 8;
@@ -101,9 +102,19 @@ class MetroMapPainter extends CustomPainter {
 
       final double traveledDistance =
           localPercent * segmentDistances[segmentIndex];
-      final offset = start + normDif * traveledDistance;
+      final offset =
+          (start + normDif * traveledDistance).scale(size.width, size.height);
 
-      canvas.drawCircle(offset.scale(size.width, size.height), 15, paint);
+      var rect = offset & Size(45, 25);
+
+      final angle = atan2(start.dy - end.dy, start.dx - end.dx);
+      rect = rect.shift(Offset(-rect.width / 2, -rect.height / 2));
+      canvas.save();
+      canvas.translate(rect.center.dx, rect.center.dy);
+      canvas.rotate(angle);
+      canvas.translate(-rect.center.dx, -rect.center.dy);
+      canvas.drawRect(rect, paint);
+      canvas.restore();
     }
   }
 

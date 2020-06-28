@@ -26,7 +26,7 @@ MetroLine lineA = MetroLineBuilder(
 ).addTrack(
   [Offset(0.4, 0.1)],
 ).addTrack(
-  [Offset(0.6, 0.5), Offset(0.75, 0.5)],
+  [Offset(0.5, 0.2), Offset(0.5, 0.5)],
 ).addTrack(
   [Offset(0.9, 0.5)],
 ).build();
