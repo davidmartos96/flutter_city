@@ -1,22 +1,5 @@
 import 'package:flutter/material.dart';
 
-class MetroLine {
-  final Color color;
-  final List<MetroTrack> tracks;
-  final List<Offset> stops;
-  final List<StopInfo> stopInfos;
-
-  MetroLine(this.color, this.tracks, this.stops, this.stopInfos);
-
-  List<Offset> getPoints() {
-    List<Offset> points = [tracks.first.points.first];
-    for (var segment in tracks) {
-      points.addAll(segment.points.skip(1));
-    }
-    return points;
-  }
-}
-
 List<MetroLine> allMetroLines = [
   lineA,
   lineB,
@@ -27,9 +10,9 @@ List<MetroLine> allMetroLines = [
 
 MetroLine lineA = MetroLineBuilder(Color(0xffccf041), Offset(0.1, 0.1), [
   StopInfo("Mobile"),
-  StopInfo("Web"),
-  StopInfo("Desktop", nameOffset: Offset(20, -12)),
-  StopInfo("The Unknown", nameOffset: Offset(20, -12)),
+  StopInfo("Web", nameOffset: Offset(-12, -35)),
+  StopInfo("Desktop", nameOffset: Offset(20, -7)),
+  StopInfo("The Unknown", nameOffset: Offset(20, -7)),
 ]).addTrack(
   [
     Offset(0.1, 0.25),
@@ -49,7 +32,7 @@ MetroLine lineA = MetroLineBuilder(Color(0xffccf041), Offset(0.1, 0.1), [
 
 MetroLine lineB = MetroLineBuilder(Color(0xff00fcfc), Offset(0.2, 0.6), [
   StopInfo("Provider", nameOffset: Offset(-25, 20)),
-  StopInfo("Sqflite", nameOffset: Offset(-55, -10)),
+  StopInfo("Sqflite", nameOffset: Offset(-55, -7)),
   StopInfo("Bloc", nameOffset: Offset(-15, -35)),
   StopInfo("Firebase", nameOffset: Offset(-35, 20)),
 ]).addTrack(
@@ -84,9 +67,9 @@ MetroLine lineC = MetroLineBuilder(Color(0xffed00fa), Offset(0.25, 0.9), [
 ).build();
 
 MetroLine lineD = MetroLineBuilder(Color(0xffff5a83), Offset(0.12, 0.5), [
-  StopInfo("Design", nameOffset: Offset(-40, 25)),
-  StopInfo("Test", nameOffset: Offset(-15, -35)),
-  StopInfo("Develop", nameOffset: Offset(-5, 25)),
+  StopInfo("Design", nameOffset: Offset(-40, 20)),
+  StopInfo("Test", nameOffset: Offset(-12, -35)),
+  StopInfo("Develop", nameOffset: Offset(-5, 20)),
   StopInfo("Release"),
 ]).addTrack(
   [
@@ -120,6 +103,23 @@ MetroLine lineE = MetroLineBuilder(Color(0xFF1ad7a3), Offset(0.94, 0.6), [
     Offset(0.51, 0.8),
   ],
 ).build();
+
+class MetroLine {
+  final Color color;
+  final List<MetroTrack> tracks;
+  final List<Offset> stops;
+  final List<StopInfo> stopInfos;
+
+  MetroLine(this.color, this.tracks, this.stops, this.stopInfos);
+
+  List<Offset> getPoints() {
+    List<Offset> points = [tracks.first.points.first];
+    for (var segment in tracks) {
+      points.addAll(segment.points.skip(1));
+    }
+    return points;
+  }
+}
 
 class MetroTrack {
   final List<Offset> points;
