@@ -41,7 +41,7 @@ class MetroMapPainter extends CustomPainter {
 
   void paintMetroLine(Canvas canvas, Size size, MetroLine metroLine) {
     var paint = Paint()
-      ..color = lineColorBasedOnStatus(metroLine).withOpacity(0.8)
+      ..color = lineColorBasedOnStatus(metroLine).withOpacity(metroLine == selectedMetroLine ? 1.0 : 0.75)
       ..strokeWidth = lineStroke
       ..strokeCap = StrokeCap.round
       ..style = PaintingStyle.stroke;
