@@ -27,9 +27,9 @@ List<MetroLine> allMetroLines = [
 
 MetroLine lineA = MetroLineBuilder(Color(0xffccf041), Offset(0.1, 0.1), [
   StopInfo("Mobile"),
-  StopInfo("Web"),
-  StopInfo("Desktop", nameOffset: Offset(20, -12)),
-  StopInfo("The Unknown", nameOffset: Offset(20, -12)),
+  StopInfo("Web", nameOffset: Offset(-12, -35)),
+  StopInfo("Desktop", nameOffset: Offset(20, -7)),
+  StopInfo("The Unknown", nameOffset: Offset(20, -7)),
 ]).addTrack(
   [
     Offset(0.1, 0.25),
@@ -84,9 +84,9 @@ MetroLine lineC = MetroLineBuilder(Color(0xffed00fa), Offset(0.25, 0.9), [
 ).build();
 
 MetroLine lineD = MetroLineBuilder(Color(0xffff5a83), Offset(0.12, 0.5), [
-  StopInfo("Design", nameOffset: Offset(-40, 25)),
-  StopInfo("Test", nameOffset: Offset(-15, -35)),
-  StopInfo("Develop", nameOffset: Offset(-5, 25)),
+  StopInfo("Design", nameOffset: Offset(-40, 20)),
+  StopInfo("Test", nameOffset: Offset(-12, -35)),
+  StopInfo("Develop", nameOffset: Offset(-5, 20)),
   StopInfo("Release"),
 ]).addTrack(
   [
