@@ -3,13 +3,10 @@ import 'package:flutter/material.dart';
 class MetroLine {
   final Color color;
   final List<MetroTrack> tracks;
-  final Set<Offset> stops;
+  final List<Offset> stops;
+  final List<StopInfo> stopInfos;
 
-  MetroLine(this.color, this.tracks, this.stops)
-      : assert(
-            stops.containsAll(
-                [tracks.first.points.first, tracks.first.points.last]),
-            "Begin and end must be stops");
+  MetroLine(this.color, this.tracks, this.stops, this.stopInfos);
 
   List<Offset> getPoints() {
     List<Offset> points = [tracks.first.points.first];
@@ -20,15 +17,108 @@ class MetroLine {
   }
 }
 
-MetroLine lineA = MetroLineBuilder(
-  Colors.pink,
-  Offset(0.1, 0.1),
+List<MetroLine> allMetroLines = [
+  lineA,
+  lineB,
+  lineC,
+  lineD,
+  lineE,
+];
+
+MetroLine lineA = MetroLineBuilder(Colors.orange, Offset(0.1, 0.1), [
+  StopInfo("Mobile"),
+  StopInfo("Web"),
+  StopInfo("Desktop", nameOffset: Offset(20, -12)),
+  StopInfo("The Unknown", nameOffset: Offset(20, -12) ),
+]).addTrack(
+  [
+    Offset(0.1, 0.25),
+    Offset(0.25, 0.25),
+    Offset(0.38, 0.3),
+  ],
 ).addTrack(
-  [Offset(0.4, 0.1)],
+  [
+    Offset(0.4, 0.4),
+    Offset(0.4, 0.6),
+    Offset(0.75, 0.7),
+    Offset(0.75, 0.8),
+  ],
 ).addTrack(
-  [Offset(0.5, 0.2), Offset(0.5, 0.5)],
+  [Offset(0.75, 0.95)],
+).build();
+
+MetroLine lineB = MetroLineBuilder(Colors.pink, Offset(0.2, 0.6), [
+  StopInfo("Provider", nameOffset: Offset(-25, 20)),
+  StopInfo("Sqflite", nameOffset: Offset(-55, -10)),
+  StopInfo("Bloc", nameOffset: Offset(-15, -35)),
+  StopInfo("Firebase", nameOffset: Offset(-35, 20)),
+]).addTrack(
+  [
+    Offset(0.2, 0.3),
+  ],
 ).addTrack(
-  [Offset(0.9, 0.5)],
+  [
+    Offset(0.2, 0.15),
+    Offset(0.3, 0.15),
+  ],
+).addTrack(
+  [Offset(0.95, 0.35)],
+).build();
+
+MetroLine lineC = MetroLineBuilder(Colors.red[400], Offset(0.25, 0.9), [
+  StopInfo("Row", nameOffset: Offset(-17, 20)),
+  StopInfo("Column", nameOffset: Offset(20, -10)),
+  StopInfo("Stack", nameOffset: Offset(-15, -35)),
+]).addTrack(
+  [
+    Offset(0.25, 0.8),
+    Offset(0.33, 0.77),
+    Offset(0.33, 0.7),
+  ],
+).addTrack(
+  [
+    Offset(0.33, 0.5),
+    Offset(0.55, 0.35),
+    Offset(0.6, 0.15),
+  ],
+).build();
+
+MetroLine lineD = MetroLineBuilder(Colors.green, Offset(0.12, 0.5), [
+  StopInfo("Design", nameOffset: Offset(-40, 25)),
+  StopInfo("Test", nameOffset: Offset(-15, -35)),
+  StopInfo("Develop", nameOffset: Offset(-5, 25)),
+  StopInfo("Release"),
+]).addTrack(
+  [
+    Offset(0.12, 0.4),
+    Offset(0.29, 0.4),
+  ],
+).addTrack(
+  [
+    Offset(0.65, 0.4),
+    Offset(0.65, 0.35),
+    Offset(0.7, 0.32),
+  ],
+).addTrack(
+  [
+    Offset(0.9, 0.24),
+    Offset(0.90, 0.17),
+  ],
+).build();
+
+MetroLine lineE = MetroLineBuilder(Colors.blue[400], Offset(0.88, 0.55), [
+  StopInfo("Widget"),
+  StopInfo("Element"),
+  StopInfo("Render Object", nameOffset: Offset(-35, 20)),
+]).addTrack(
+  [
+    Offset(0.71, 0.55),
+  ],
+).addTrack(
+  [
+    Offset(0.57, 0.55),
+    Offset(0.51, 0.8),
+  ],
 ).build();
 
 class MetroTrack {
@@ -54,11 +144,12 @@ class MetroTrack {
 
 class MetroLineBuilder {
   final Color color;
-  Set<Offset> _stops = {};
+  List<Offset> _stops = [];
   List<MetroTrack> _tracks = [];
   MetroTrack _currentTrack;
+  final List<StopInfo> stopInfos;
 
-  MetroLineBuilder(this.color, Offset start) {
+  MetroLineBuilder(this.color, Offset start, this.stopInfos) {
     _stops.add(start);
     _currentTrack = MetroTrack([start]);
   }
@@ -76,6 +167,26 @@ class MetroLineBuilder {
   }
 
   MetroLine build() {
-    return MetroLine(color, _tracks, _stops);
+    return MetroLine(color, _tracks, _stops, stopInfos);
   }
 }
+
+class StopInfo {
+  final String name;
+  final Offset nameOffset;
+
+  StopInfo(this.name, {this.nameOffset});
+}
+
+MetroLine lineAOld = MetroLineBuilder(Colors.pink, Offset(0.1, 0.1), [
+  StopInfo("Aaaaa"),
+  StopInfo("BBBB"),
+  StopInfo("CCCCC"),
+  StopInfo("DDDDD"),
+]).addTrack(
+  [Offset(0.4, 0.1)],
+).addTrack(
+  [Offset(0.5, 0.2), Offset(0.5, 0.5)],
+).addTrack(
+  [Offset(0.9, 0.5)],
+).build();

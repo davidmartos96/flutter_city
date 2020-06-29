@@ -10,13 +10,15 @@ double lineStroke = 8;
 
 class MetroMapPainter extends CustomPainter {
   final List<MetroLine> metroLines;
+  final MetroLine selectedMetroLine;
+  final int selectedMetroStopIndex;
+  final double selectionAnimValue;
 
-  MetroMapPainter(this.metroLines);
+  MetroMapPainter(
+      this.metroLines, this.selectedMetroLine, this.selectedMetroStopIndex, this.selectionAnimValue);
+
   @override
   void paint(Canvas canvas, Size size) {
-    print("Canvas size");
-    print(size);
-
     for (var metroLine in metroLines) {
       paintMetroLine(canvas, size, metroLine);
     }
@@ -41,7 +43,7 @@ class MetroMapPainter extends CustomPainter {
 
     for (var track in metroLine.tracks) {
       if (track.trainsMap.isNotEmpty) {
-        paintTrains(canvas, size, track);
+        paintTrains(canvas, size, metroLine, track);
       }
     }
 
@@ -54,26 +56,36 @@ class MetroMapPainter extends CustomPainter {
       ..strokeWidth = lineStroke
       ..strokeCap = StrokeCap.round
       ..style = PaintingStyle.fill;
-    for (var stop in metroLine.stops) {
+    for (var i = 0; i < metroLine.stops.length; i++) {
+      var stop = metroLine.stops[i];
+      bool selected =
+          metroLine == selectedMetroLine && i == selectedMetroStopIndex;
+
+      double radius = stopRadius;
+      if (selected) {
+        radius = radius + selectionAnimValue * 3;
+      }
+
       canvas.drawCircle(
         Offset(stop.dx * size.width, stop.dy * size.height),
-        stopRadius,
+        radius,
         paint,
       );
 
-      paint.color = Colors.white;
+      paint.color =  Colors.white;
       canvas.drawCircle(
         Offset(stop.dx * size.width, stop.dy * size.height),
-        stopRadius / 3,
+        radius / 3,
         paint,
       );
       paint.color = metroLine.color;
     }
   }
 
-  void paintTrains(Canvas canvas, Size size, MetroTrack track) {
+  void paintTrains(
+      Canvas canvas, Size size, MetroLine metroLine, MetroTrack track) {
     var paint = Paint()
-      ..color = Colors.white
+      ..color = metroLine.color
       ..strokeWidth = 15
       ..strokeCap = StrokeCap.round
       ..style = PaintingStyle.fill;
