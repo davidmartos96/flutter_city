@@ -49,7 +49,7 @@ MetroLine lineA = MetroLineBuilder(Color(0xffccf041), Offset(0.1, 0.1), [
 
 MetroLine lineB = MetroLineBuilder(Color(0xff00fcfc), Offset(0.2, 0.6), [
   StopInfo("Provider", nameOffset: Offset(-25, 20)),
-  StopInfo("Sqflite", nameOffset: Offset(-55, -10)),
+  StopInfo("Sqflite", nameOffset: Offset(-55, -7)),
   StopInfo("Bloc", nameOffset: Offset(-15, -35)),
   StopInfo("Firebase", nameOffset: Offset(-35, 20)),
 ]).addTrack(

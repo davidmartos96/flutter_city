@@ -75,7 +75,7 @@ class _MetroCanvasState extends State<MetroCanvas>
   MetroLine selectedMetroLine;
   int selectedMetroStopIndex;
 
-  AnimationController selectedTrackAnimController;
+  AnimationController initAnimController, selectedTrackAnimController;
 
   List<Widget> overlays = [];
 
@@ -84,31 +84,62 @@ class _MetroCanvasState extends State<MetroCanvas>
   @override
   void initState() {
     super.initState();
+    initAnimController = AnimationController(
+        vsync: this, duration: Duration(milliseconds: 2500));
+    initAnimController.addListener(() {
+      setState(() {});
+    });
 
     selectedTrackAnimController =
         AnimationController(vsync: this, duration: Duration(milliseconds: 700));
     selectedTrackAnimController.addListener(() {
       setState(() {});
     });
+  }
 
-    initializeTrainSpawner();
-
+  void startMetroStation() {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       final box = canvasKey.currentContext.findRenderObject() as RenderBox;
       initializeOverlays(allMetroLines, box.size.width, box.size.height);
+
+      initializeSpawner(box.size);
     });
   }
 
-  void initializeTrainSpawner() {
+  void initializeSpawner(Size size) {
     Random r = Random();
-    trySpawn(r, 0.8);
+    trySpawnTrains(r, 0.8);
 
     Timer.periodic(Duration(milliseconds: 300), (timer) {
-      trySpawn(r, 0.3);
+      trySpawnTrains(r, 0.3);
+
+      if (r.nextDouble() < 0.13) {
+        const lastDuration = Duration(milliseconds: 3000);
+        // Event
+        final int tick = timer.tick;
+        Widget eventOverlay = Positioned(
+          key: ValueKey(tick),
+          left: r.nextDouble() * size.width,
+          top: r.nextDouble() * size.height,
+          child: SpinKitRipple(
+            color: Colors.red,
+            size: 80.0,
+            borderWidth: 10,
+            duration: Duration(milliseconds: (lastDuration.inMilliseconds / 2).round()) ,
+          ),
+        );
+        overlays.add(eventOverlay);
+
+        Timer(lastDuration, () {
+          overlays.removeWhere((w) => w.key == ValueKey(tick));
+        });
+      }
+
+      setState(() {});
     });
   }
 
-  void trySpawn(Random r, double chance) {
+  void trySpawnTrains(Random r, double chance) {
     for (var metroLine in allMetroLines) {
       if (r.nextDouble() < chance) {
         int trackIndex = r.nextInt(metroLine.tracks.length);
@@ -143,12 +174,12 @@ class _MetroCanvasState extends State<MetroCanvas>
 
   @override
   Widget build(BuildContext context) {
-    const double selectionHeight = 105;
+    const double bottomPanelHeight = 105;
     return Stack(
       children: <Widget>[
         BackgroundGrid(),
         Padding(
-          padding: const EdgeInsets.only(bottom: selectionHeight),
+          padding: const EdgeInsets.only(bottom: bottomPanelHeight),
           child: Stack(
             key: canvasKey,
             children: <Widget>[
@@ -157,6 +188,7 @@ class _MetroCanvasState extends State<MetroCanvas>
                   allMetroLines,
                   selectedMetroLine,
                   selectedMetroStopIndex,
+                  initAnimController.value,
                   selectedTrackAnimController.value,
                 ),
                 child: Container(),
@@ -168,7 +200,7 @@ class _MetroCanvasState extends State<MetroCanvas>
         Align(
           alignment: Alignment.bottomCenter,
           child: Container(
-            height: selectionHeight,
+            height: bottomPanelHeight,
             child: (selectedMetroStopIndex != null)
                 ? Align(
                     key: ValueKey("$selectedMetroLine $selectedMetroStopIndex"),
@@ -177,6 +209,40 @@ class _MetroCanvasState extends State<MetroCanvas>
                         selectedMetroLine, selectedMetroStopIndex),
                   )
                 : SizedBox(),
+          ),
+        ),
+        Align(
+          alignment: Alignment.bottomCenter,
+          child: Container(
+            height: bottomPanelHeight,
+            child: Center(
+              child: Opacity(
+                opacity: 1 - initAnimController.value,
+                child: FlatButton(
+                  padding: EdgeInsets.symmetric(
+                    vertical: 20.0,
+                    horizontal: 40.0,
+                  ),
+                  shape: buildCyberBorder(),
+                  child: Text(
+                    "START",
+                    style: GoogleFonts.audiowide(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 26,
+                      color: Colors.black,
+                    ),
+                  ),
+                  color: Colors.white,
+                  onPressed: initAnimController.isAnimating
+                      ? () {}
+                      : () {
+                          initAnimController
+                              .forward()
+                              .then((value) => startMetroStation());
+                        },
+                ),
+              ),
+            ),
           ),
         ),
       ],
@@ -324,21 +390,6 @@ class StopColorIndicator extends StatelessWidget {
   }
 }
 
-class StopStatus extends StatelessWidget {
-  const StopStatus({Key key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Text(
-      "OK",
-      style: TextStyle(
-        color: Color.fromRGBO(39, 174, 96, 1.0),
-        fontWeight: FontWeight.bold,
-      ),
-    );
-  }
-}
-
 class NextTrainDetails extends StatefulWidget {
   const NextTrainDetails({Key key}) : super(key: key);
 
@@ -357,7 +408,7 @@ class _NextTrainDetailsState extends State<NextTrainDetails> {
     super.initState();
     Random r = Random();
     trainId = 1000 + r.nextInt(9000);
-    secondsRemaining = 10 + r.nextInt(40);
+    secondsRemaining = 5 + r.nextInt(5);
     timer = Timer.periodic(Duration(milliseconds: 1500), (timer) {
       setState(() {
         secondsRemaining -= 1;

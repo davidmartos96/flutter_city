@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:hack20/metro_line.dart';
 import 'dart:math';
 
-
 double stopRadius = 15;
 double lineStroke = 8;
 
@@ -11,10 +10,23 @@ class MetroMapPainter extends CustomPainter {
   final List<MetroLine> metroLines;
   final MetroLine selectedMetroLine;
   final int selectedMetroStopIndex;
+  final double initializationAnimValue;
   final double selectionAnimValue;
 
   MetroMapPainter(
-      this.metroLines, this.selectedMetroLine, this.selectedMetroStopIndex, this.selectionAnimValue);
+      this.metroLines,
+      this.selectedMetroLine,
+      this.selectedMetroStopIndex,
+      this.initializationAnimValue,
+      this.selectionAnimValue);
+
+  Color lineColorBasedOnStatus(MetroLine line) {
+    double luminance = line.color.computeLuminance();
+    int gray = (luminance * 255).round();
+    Color grayColor = Color.fromRGBO(gray, gray, gray, 1.0);
+
+    return Color.lerp(grayColor, line.color, initializationAnimValue);
+  }
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -25,7 +37,7 @@ class MetroMapPainter extends CustomPainter {
 
   void paintMetroLine(Canvas canvas, Size size, MetroLine metroLine) {
     var paint = Paint()
-      ..color = metroLine.color.withOpacity(0.8)
+      ..color = lineColorBasedOnStatus(metroLine).withOpacity(0.8)
       ..strokeWidth = lineStroke
       ..strokeCap = StrokeCap.round
       ..style = PaintingStyle.stroke;
@@ -51,10 +63,10 @@ class MetroMapPainter extends CustomPainter {
 
   void paintStops(Canvas canvas, Size size, MetroLine metroLine) {
     var paint = Paint()
-      ..color = metroLine.color
       ..strokeWidth = lineStroke
       ..strokeCap = StrokeCap.round
       ..style = PaintingStyle.fill;
+    Color metroLineColor = lineColorBasedOnStatus(metroLine);
     for (var i = 0; i < metroLine.stops.length; i++) {
       var stop = metroLine.stops[i];
       bool selected =
@@ -65,19 +77,21 @@ class MetroMapPainter extends CustomPainter {
         radius = radius + selectionAnimValue * 3;
       }
 
+      paint.color = selected ? Colors.white : metroLineColor;
       canvas.drawCircle(
         Offset(stop.dx * size.width, stop.dy * size.height),
         radius,
         paint,
       );
 
-      paint.color =  Colors.white;
+      Color tmpColor = paint.color;
+      paint.color = selected ? metroLineColor : Colors.white;
       canvas.drawCircle(
         Offset(stop.dx * size.width, stop.dy * size.height),
-        radius / 3,
+        radius / (selected ? 1.5 : 3),
         paint,
       );
-      paint.color = metroLine.color;
+      paint.color = tmpColor;
     }
   }
 
