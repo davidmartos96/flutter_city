@@ -1,22 +1,5 @@
 import 'package:flutter/material.dart';
 
-class MetroLine {
-  final Color color;
-  final List<MetroTrack> tracks;
-  final List<Offset> stops;
-  final List<StopInfo> stopInfos;
-
-  MetroLine(this.color, this.tracks, this.stops, this.stopInfos);
-
-  List<Offset> getPoints() {
-    List<Offset> points = [tracks.first.points.first];
-    for (var segment in tracks) {
-      points.addAll(segment.points.skip(1));
-    }
-    return points;
-  }
-}
-
 List<MetroLine> allMetroLines = [
   lineA,
   lineB,
@@ -120,6 +103,23 @@ MetroLine lineE = MetroLineBuilder(Color(0xFF1ad7a3), Offset(0.94, 0.6), [
     Offset(0.51, 0.8),
   ],
 ).build();
+
+class MetroLine {
+  final Color color;
+  final List<MetroTrack> tracks;
+  final List<Offset> stops;
+  final List<StopInfo> stopInfos;
+
+  MetroLine(this.color, this.tracks, this.stops, this.stopInfos);
+
+  List<Offset> getPoints() {
+    List<Offset> points = [tracks.first.points.first];
+    for (var segment in tracks) {
+      points.addAll(segment.points.skip(1));
+    }
+    return points;
+  }
+}
 
 class MetroTrack {
   final List<Offset> points;

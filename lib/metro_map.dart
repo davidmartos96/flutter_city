@@ -10,7 +10,11 @@ class MetroMapPainter extends CustomPainter {
   final List<MetroLine> metroLines;
   final MetroLine selectedMetroLine;
   final int selectedMetroStopIndex;
+
+  /// Keeps track of the Flutter Sity start animation
   final double initializationAnimValue;
+
+  /// Keeps track of the selected stop animation
   final double selectionAnimValue;
 
   MetroMapPainter(
@@ -137,7 +141,6 @@ class MetroMapPainter extends CustomPainter {
       if (segmentIndex == segmentDistances.length - 1) {
         double distanceToEnd = (end - offsetRel)
             .scale(size.width, size.height)
-            //.translate(fullTrainWidth / 2, 0)
             .distance;
         trainWidth = min(trainWidth, distanceToEnd);
       }
