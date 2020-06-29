@@ -302,7 +302,7 @@ class _MetroCanvasState extends State<MetroCanvas>
 
   Widget buildEventRipple(Duration eventDuration) {
     return SpinKitRipple(
-      color: Colors.red,
+      color: Theme.of(context).accentColor,
       size: 80.0,
       borderWidth: 10,
       duration:
