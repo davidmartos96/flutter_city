@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'package:hack20/metro_page.dart';
-import 'package:hack20/theme.dart';
+import 'package:fluttercity/metro_page.dart';
+import 'package:fluttercity/theme.dart';
 
 void main() {
   runApp(MyApp());

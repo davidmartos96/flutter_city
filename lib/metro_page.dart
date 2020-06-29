@@ -4,11 +4,11 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:hack20/cyber_shape.dart';
-import 'package:hack20/metro_line.dart';
-import 'package:hack20/metro_map.dart';
-import 'package:hack20/selection_panel.dart';
-import 'package:hack20/typer_texts.dart';
+import 'package:fluttercity/cyber_shape.dart';
+import 'package:fluttercity/metro_line.dart';
+import 'package:fluttercity/metro_map.dart';
+import 'package:fluttercity/selection_panel.dart';
+import 'package:fluttercity/typer_texts.dart';
 
 class MetroPage extends StatelessWidget {
   const MetroPage({Key key}) : super(key: key);

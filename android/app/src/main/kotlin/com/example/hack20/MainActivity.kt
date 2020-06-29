@@ -1,4 +1,4 @@
-package com.example.hack20
+package com.example.fluttercity
 
 import io.flutter.embedding.android.FlutterActivity
 

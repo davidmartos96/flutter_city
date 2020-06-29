@@ -3,9 +3,9 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:hack20/cyber_shape.dart';
-import 'package:hack20/metro_line.dart';
-import 'package:hack20/typer_texts.dart';
+import 'package:fluttercity/cyber_shape.dart';
+import 'package:fluttercity/metro_line.dart';
+import 'package:fluttercity/typer_texts.dart';
 
 class SelectionPanel extends StatelessWidget {
   const SelectionPanel(this.metroLine, this.stopIndex, {Key key})
