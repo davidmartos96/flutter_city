@@ -118,7 +118,7 @@ class _NextTrainDetailsState extends State<NextTrainDetails> {
     Random r = Random();
     trainId = 1000 + r.nextInt(9000);
     secondsRemaining = 5 + r.nextInt(5);
-    timer = Timer.periodic(Duration(milliseconds: 1500), (timer) {
+    timer = Timer.periodic(Duration(milliseconds: 1000), (timer) {
       setState(() {
         secondsRemaining -= 1;
       });
