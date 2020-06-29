@@ -25,11 +25,11 @@ List<MetroLine> allMetroLines = [
   lineE,
 ];
 
-MetroLine lineA = MetroLineBuilder(Colors.orange, Offset(0.1, 0.1), [
+MetroLine lineA = MetroLineBuilder(Color(0xffccf041), Offset(0.1, 0.1), [
   StopInfo("Mobile"),
   StopInfo("Web"),
   StopInfo("Desktop", nameOffset: Offset(20, -12)),
-  StopInfo("The Unknown", nameOffset: Offset(20, -12) ),
+  StopInfo("The Unknown", nameOffset: Offset(20, -12)),
 ]).addTrack(
   [
     Offset(0.1, 0.25),
@@ -47,7 +47,7 @@ MetroLine lineA = MetroLineBuilder(Colors.orange, Offset(0.1, 0.1), [
   [Offset(0.75, 0.95)],
 ).build();
 
-MetroLine lineB = MetroLineBuilder(Colors.pink, Offset(0.2, 0.6), [
+MetroLine lineB = MetroLineBuilder(Color(0xff00fcfc), Offset(0.2, 0.6), [
   StopInfo("Provider", nameOffset: Offset(-25, 20)),
   StopInfo("Sqflite", nameOffset: Offset(-55, -10)),
   StopInfo("Bloc", nameOffset: Offset(-15, -35)),
@@ -65,7 +65,7 @@ MetroLine lineB = MetroLineBuilder(Colors.pink, Offset(0.2, 0.6), [
   [Offset(0.95, 0.35)],
 ).build();
 
-MetroLine lineC = MetroLineBuilder(Colors.red[400], Offset(0.25, 0.9), [
+MetroLine lineC = MetroLineBuilder(Color(0xffed00fa), Offset(0.25, 0.9), [
   StopInfo("Row", nameOffset: Offset(-17, 20)),
   StopInfo("Column", nameOffset: Offset(20, -10)),
   StopInfo("Stack", nameOffset: Offset(-15, -35)),
@@ -83,7 +83,7 @@ MetroLine lineC = MetroLineBuilder(Colors.red[400], Offset(0.25, 0.9), [
   ],
 ).build();
 
-MetroLine lineD = MetroLineBuilder(Colors.green, Offset(0.12, 0.5), [
+MetroLine lineD = MetroLineBuilder(Color(0xffff5a83), Offset(0.12, 0.5), [
   StopInfo("Design", nameOffset: Offset(-40, 25)),
   StopInfo("Test", nameOffset: Offset(-15, -35)),
   StopInfo("Develop", nameOffset: Offset(-5, 25)),
@@ -106,7 +106,7 @@ MetroLine lineD = MetroLineBuilder(Colors.green, Offset(0.12, 0.5), [
   ],
 ).build();
 
-MetroLine lineE = MetroLineBuilder(Colors.blue[400], Offset(0.88, 0.55), [
+MetroLine lineE = MetroLineBuilder(Color(0xFF1ad7a3), Offset(0.94, 0.6), [
   StopInfo("Widget"),
   StopInfo("Element"),
   StopInfo("Render Object", nameOffset: Offset(-35, 20)),
@@ -177,16 +177,3 @@ class StopInfo {
 
   StopInfo(this.name, {this.nameOffset});
 }
-
-MetroLine lineAOld = MetroLineBuilder(Colors.pink, Offset(0.1, 0.1), [
-  StopInfo("Aaaaa"),
-  StopInfo("BBBB"),
-  StopInfo("CCCCC"),
-  StopInfo("DDDDD"),
-]).addTrack(
-  [Offset(0.4, 0.1)],
-).addTrack(
-  [Offset(0.5, 0.2), Offset(0.5, 0.5)],
-).addTrack(
-  [Offset(0.9, 0.5)],
-).build();

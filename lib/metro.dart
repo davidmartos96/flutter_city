@@ -3,7 +3,8 @@ import 'dart:math';
 
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:hack20/cyber_shape.dart';
 import 'package:hack20/metro_line.dart';
 import 'package:hack20/metro_map.dart';
@@ -15,8 +16,17 @@ class MetroPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: TyperText(
-            "FLUTTER CITY",
+          title: ColorizeAnimatedTextKit(
+            text: ["FLUTTER CITY"],
+            pause: Duration(milliseconds: 3000),
+            textStyle: GoogleFonts.audiowide(
+                fontWeight: FontWeight.bold, fontSize: 24),
+            repeatForever: true,
+            colors: [
+              Color(0xffff19de),
+              Color(0xff00e7fb),
+              Color(0xff6b38e7),
+            ],
           ),
           centerTitle: true,
         ),
@@ -28,17 +38,19 @@ class TyperText extends StatelessWidget {
   const TyperText(
     this.text, {
     this.style,
+    this.pause = const Duration(days: 1),
     Key key,
   }) : super(key: key);
 
   final String text;
   final TextStyle style;
+  final Duration pause;
 
   @override
   Widget build(BuildContext context) {
     return TyperAnimatedTextKit(
         speed: Duration(milliseconds: 100),
-        pause: Duration(days: 1),
+        pause: pause,
         text: [
           text,
         ],
@@ -58,13 +70,16 @@ class MetroCanvas extends StatefulWidget {
 
 class _MetroCanvasState extends State<MetroCanvas>
     with TickerProviderStateMixin {
-  List<AnimationController> controllers = [];
   var _globalTrainId = 0;
 
   MetroLine selectedMetroLine;
   int selectedMetroStopIndex;
 
   AnimationController selectedTrackAnimController;
+
+  List<Widget> overlays = [];
+
+  GlobalKey canvasKey = GlobalKey();
 
   @override
   void initState() {
@@ -76,13 +91,35 @@ class _MetroCanvasState extends State<MetroCanvas>
       setState(() {});
     });
 
-    //addTrain(lineA.tracks.first);
-    addTrain(lineA.tracks[1]);
+    initializeTrainSpawner();
+
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      final box = canvasKey.currentContext.findRenderObject() as RenderBox;
+      initializeOverlays(allMetroLines, box.size.width, box.size.height);
+    });
   }
 
-  void addTrain(MetroTrack track) {
-    final controller =
-        AnimationController(vsync: this, duration: Duration(seconds: 5));
+  void initializeTrainSpawner() {
+    Random r = Random();
+    trySpawn(r, 0.8);
+
+    Timer.periodic(Duration(milliseconds: 300), (timer) {
+      trySpawn(r, 0.3);
+    });
+  }
+
+  void trySpawn(Random r, double chance) {
+    for (var metroLine in allMetroLines) {
+      if (r.nextDouble() < chance) {
+        int trackIndex = r.nextInt(metroLine.tracks.length);
+        int millis = 1000 + r.nextInt(3000);
+        addTrain(metroLine.tracks[trackIndex], Duration(milliseconds: millis));
+      }
+    }
+  }
+
+  void addTrain(MetroTrack track, Duration duration) {
+    final controller = AnimationController(vsync: this, duration: duration);
 
     final currentTrainId = _globalTrainId;
     _globalTrainId++;
@@ -90,13 +127,18 @@ class _MetroCanvasState extends State<MetroCanvas>
     track.trainsMap[currentTrainId] = 0;
     controller.addListener(() {
       final t = controller.value;
-      track.trainsMap[currentTrainId] = t;
+
+      if (t == 1.0) {
+        track.trainsMap.remove(currentTrainId);
+        controller.dispose();
+      } else {
+        track.trainsMap[currentTrainId] = t;
+      }
 
       setState(() {});
     });
 
     controller.forward();
-    controllers.add(controller);
   }
 
   @override
@@ -107,27 +149,20 @@ class _MetroCanvasState extends State<MetroCanvas>
         BackgroundGrid(),
         Padding(
           padding: const EdgeInsets.only(bottom: selectionHeight),
-          child: LayoutBuilder(
-            builder: (context, constraints) {
-              final double height = constraints.maxHeight;
-              final double width = constraints.maxWidth;
-
-              final metroLines = allMetroLines;
-              return Stack(
-                children: <Widget>[
-                  CustomPaint(
-                    painter: MetroMapPainter(
-                      metroLines,
-                      selectedMetroLine,
-                      selectedMetroStopIndex,
-                      selectedTrackAnimController.value,
-                    ),
-                    child: Container(),
-                  ),
-                  ...getOverlays(metroLines, width, height),
-                ],
-              );
-            },
+          child: Stack(
+            key: canvasKey,
+            children: <Widget>[
+              CustomPaint(
+                painter: MetroMapPainter(
+                  allMetroLines,
+                  selectedMetroLine,
+                  selectedMetroStopIndex,
+                  selectedTrackAnimController.value,
+                ),
+                child: Container(),
+              ),
+              ...overlays,
+            ],
           ),
         ),
         Align(
@@ -148,10 +183,11 @@ class _MetroCanvasState extends State<MetroCanvas>
     );
   }
 
-  List<Widget> getOverlays(
-      List<MetroLine> metroLines, double width, double height) {
-    List<Widget> list = [];
-    for (var metroLine in metroLines) {
+  void initializeOverlays(
+      List<MetroLine> metroLines, double width, double height) async {
+    Random r = Random();
+    for (var metroLine in metroLines..shuffle()) {
+      await Future.delayed(Duration(milliseconds: 100));
       for (int i = 0; i < metroLine.stops.length; i++) {
         StopInfo info = metroLine.stopInfos[i];
         Offset stopPosRel = metroLine.stops[i];
@@ -165,19 +201,21 @@ class _MetroCanvasState extends State<MetroCanvas>
         }
 
         // Stop name
-        list.add(
+        overlays.add(
           Positioned(
             top: stopNamePos.dy,
             left: stopNamePos.dx,
-            child: TyperText(info.name
-                //stopPosRel.toString().substring(6),
-                ),
+            child: TyperText(
+              info.name,
+              //stopPosRel.toString().substring(6),
+              pause: Duration(milliseconds: 2000 + r.nextInt(2000)),
+            ),
           ),
         );
 
         // Stop name
         const size = 36.0;
-        list.add(
+        overlays.add(
           Positioned(
             top: stopPos.dy - size / 2,
             left: stopPos.dx - size / 2,
@@ -199,8 +237,8 @@ class _MetroCanvasState extends State<MetroCanvas>
           ),
         );
       }
+      setState(() {});
     }
-    return list;
   }
 
   Widget buildSelection(MetroLine metroLine, int stopIndex) {
@@ -218,34 +256,39 @@ class _MetroCanvasState extends State<MetroCanvas>
       decoration: ShapeDecoration(
           shape: buildCyberBorderOutline(),
           color: Theme.of(context).primaryColor),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
+      child: Row(
         children: <Widget>[
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              Text(
-                "Station",
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
-              StopStatus(),
-            ],
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Text(
+                  "Station",
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+                SizedBox(height: 3),
+                Row(
+                  children: <Widget>[
+                    StopColorIndicator(stopColor),
+                    SizedBox(
+                      width: 5,
+                    ),
+                    Text(
+                      stopName,
+                      style: TextStyle(fontSize: 16),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 15),
+                NextTrainDetails(),
+              ],
+            ),
           ),
-          Row(
-            children: <Widget>[
-              StopColorIndicator(stopColor),
-              SizedBox(
-                width: 5,
-              ),
-              Text(
-                stopName,
-                style: TextStyle(fontSize: 16),
-              ),
-            ],
+          SpinKitWave(
+            color: Colors.white,
+            size: 40.0,
           ),
-          SizedBox(height: 15),
-          NextTrainDetails(),
         ],
       ),
     );

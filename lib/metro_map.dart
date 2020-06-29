@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:hack20/metro_line.dart';
 import 'dart:math';
 
-import 'cyber_shape.dart';
 
 double stopRadius = 15;
 double lineStroke = 8;
@@ -26,7 +25,7 @@ class MetroMapPainter extends CustomPainter {
 
   void paintMetroLine(Canvas canvas, Size size, MetroLine metroLine) {
     var paint = Paint()
-      ..color = metroLine.color
+      ..color = metroLine.color.withOpacity(0.8)
       ..strokeWidth = lineStroke
       ..strokeCap = StrokeCap.round
       ..style = PaintingStyle.stroke;
@@ -124,7 +123,7 @@ class MetroMapPainter extends CustomPainter {
       if (segmentIndex == segmentDistances.length - 1) {
         double distanceToEnd = (end - offsetRel)
             .scale(size.width, size.height)
-            .translate(fullTrainWidth / 2, 0)
+            //.translate(fullTrainWidth / 2, 0)
             .distance;
         trainWidth = min(trainWidth, distanceToEnd);
       }
