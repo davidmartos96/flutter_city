@@ -49,15 +49,15 @@ class TyperText extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TyperAnimatedTextKit(
-        speed: Duration(milliseconds: 100),
-        pause: pause,
-        text: [
-          text,
-        ],
-        textStyle: style,
-        textAlign: TextAlign.start,
-        alignment: AlignmentDirectional.topStart // or Alignment.topLeft
-        );
+      speed: Duration(milliseconds: 100),
+      pause: pause,
+      text: [
+        text,
+      ],
+      textStyle: style,
+      textAlign: TextAlign.start,
+      alignment: AlignmentDirectional.topStart,
+    );
   }
 }
 
@@ -221,7 +221,6 @@ class _MetroCanvasState extends State<MetroCanvas>
             left: stopPos.dx - size / 2,
             child: GestureDetector(
               onTap: () {
-                print("METRO LINE TAPPED $metroLine  ${info.name}");
                 setState(() {
                   selectedMetroLine = metroLine;
                   selectedMetroStopIndex = i;
