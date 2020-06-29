@@ -101,9 +101,12 @@ class _MetroCanvasState extends State<MetroCanvas>
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    const double selectionHeight = 105;
+    return Stack(
       children: <Widget>[
-        Expanded(
+        BackgroundGrid(),
+        Padding(
+          padding: const EdgeInsets.only(bottom: selectionHeight),
           child: LayoutBuilder(
             builder: (context, constraints) {
               final double height = constraints.maxHeight;
@@ -127,16 +130,19 @@ class _MetroCanvasState extends State<MetroCanvas>
             },
           ),
         ),
-        Container(
-          height: 105,
-          child: (selectedMetroStopIndex != null)
-              ? Align(
-                  key: ValueKey("$selectedMetroLine $selectedMetroStopIndex"),
-                  alignment: Alignment.bottomCenter,
-                  child:
-                      buildSelection(selectedMetroLine, selectedMetroStopIndex),
-                )
-              : SizedBox(),
+        Align(
+          alignment: Alignment.bottomCenter,
+          child: Container(
+            height: selectionHeight,
+            child: (selectedMetroStopIndex != null)
+                ? Align(
+                    key: ValueKey("$selectedMetroLine $selectedMetroStopIndex"),
+                    alignment: Alignment.bottomCenter,
+                    child: buildSelection(
+                        selectedMetroLine, selectedMetroStopIndex),
+                  )
+                : SizedBox(),
+          ),
         ),
       ],
     );
@@ -339,6 +345,23 @@ class _NextTrainDetailsState extends State<NextTrainDetails> {
             "Train $trainId is leaving...",
           ),
       ],
+    );
+  }
+}
+
+class BackgroundGrid extends StatelessWidget {
+  const BackgroundGrid({Key key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return GridPaper(
+      interval: 70,
+      divisions: 4,
+      subdivisions: 1,
+      color: Colors.white24,
+      child: Container(
+          //color: Colors.blue,
+          ),
     );
   }
 }
